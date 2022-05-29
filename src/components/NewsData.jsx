@@ -1,15 +1,16 @@
 import {useState, useEffect} from "react"
 import News from "./News"
-import { Form } from "react-bootstrap";
+
 
 const NewsData = () => {
-    const [container, setContainer] = useState([])
-    const [bussiness, setBussiness] = useState("")
-    const [entertainment, setEntertainment] = useState("")
-    const [environment, setEnvironment] = useState("")
 
-     useEffect(()=>{
-        fetch('https://newsdata.io/api/1/news?apikey=pub_765246a28ae9ce017d0aa5caa967b8158630&language=en&category=sports,food,health,science')
+    const [container, setContainer] = useState([])
+    const [category, setCategory] = useState("")
+    const [page, setPage] = useState(1)
+    const [isFetching, setIsFetching] = useState(false);
+  
+    const fetchData =(API)=>{
+        fetch(API)
         .then(res =>{
             return res.json()
         .then(data =>{
@@ -19,88 +20,101 @@ const NewsData = () => {
         })
         })
         })
+        
+    }
+
+    const moreData = ()=>{
+        let url = `${process.env.REACT_APP_NEWSURL}?apikey=${process.env.REACT_APP_NEWSKEY}&language=en&category=science&page=${page}`
+        fetch(url)
+        .then(res =>{
+            return res.json()
+        .then(data =>{
+            setContainer([...container, ...data.results])
+            setPage(page+1)
+            setIsFetching(false)
+        .catch(err=>{
+            console.log(err)
+        })
+        })
+        })
+    }   
+
+    const handleScroll = ()=>{ 
+        if(
+            window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight    
+        ){
+            return;
+        }
+       setIsFetching(true)
+    };
+
+    useEffect(()=>{
+        fetchData(`${process.env.REACT_APP_NEWSURL}?apikey=${process.env.REACT_APP_NEWSKEY}&language=en&category=sports`)
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll)
     },[])
 
-    const handleChange =(e)=>{
-     const bussiness = setBussiness(e.target.value)
+    useEffect(()=>{
+        if(isFetching){
+            moreData()
+        }
+    },[isFetching])
 
-     if(bussiness){
-      fetch('https://newsdata.io/api/1/news?apikey=pub_765246a28ae9ce017d0aa5caa967b8158630&language=en&category=bussiness')
-      .then(res =>{
-          return res.json()
-      .then(data =>{
-          setBussiness(data.results)
-      .catch(err=>{
-          console.log(err)
-      })
-      })
-      })
+    const handleSubmit =(e)=>{
+     const category = setCategory(e.target.value)
+
+     if(category){
+      fetchData(`${process.env.REACT_APP_NEWSURL}?apikey=${process.env.REACT_APP_NEWSKEY}&language=en&category=+${category}`)
      }
-    
-     const handleChange =(e)=>{
-      const entertainment = setEntertainment(e.target.value)
- 
-      if(entertainment){
-       fetch('https://newsdata.io/api/1/news?apikey=pub_765246a28ae9ce017d0aa5caa967b8158630&language=en&category=entertainment')
-       .then(res =>{
-           return res.json()
-       .then(data =>{
-           setEntertainment(data.results)
-       .catch(err=>{
-           console.log(err)
-       })
-       })
-       })
-      }
+    }  
 
-     const handleChange =(e)=>{
-      const environment = setEnvironment(e.target.value)
- 
-      if(environment){
-       fetch('https://newsdata.io/api/1/news?apikey=pub_765246a28ae9ce017d0aa5caa967b8158630&language=en&category=environment')
-       .then(res =>{
-           return res.json()
-       .then(data =>{
-           setEnvironment(data.results)
-       .catch(err=>{
-           console.log(err)
-       })
-       })
-       })
-      }
-
-      
-    
-
-    }
+   
     
   return (
-    <div className="container news-container d-flex mt-5 pt-2">
+      <>
+      <div className="row">
+          <div className="col-md-4"></div>
+          <div  className="text-center mt-2 col-md-4">
+         
+      
+       <form onSubmit={handleSubmit} className="mw-100">
+      <div className="">   <label>filter by catrgory</label></div>
+       <select className="mt-2">
+    <option></option>
+     <option value={category}>bussiness</option>
+    <option value={category}>entertainment</option>
+    <option value={category}>environment</option>
+    <option value={category}>food</option>
+    <option value={category}>health</option>
+    <option value={category}>politics</option>
+    <option value={category}>science</option>
+    <option value={category}>sports</option>
+    <option value={category}>technology</option>
+    <option value={category}>top</option>
+    <option value={category}>world</option>
+</select>
+</form>
 
-    <Form.Select aria-label="Default select example" className="mt-5 d-flex  justify-content-center select-form" onchange={handleChange}>
-  <option>Open this select menu</option>
-  <option value={bussiness}>bussiness</option>
-    <option value={entertainment}>entertainment</option>
-    <option value={environment}>environment</option>
-    <option value="food">food</option>
-    <option value="health">health</option>
-    <option value="politics">politics</option>
-    <option value="science">science</option>
-    <option value="sports">sports</option>
-    <option value="technology">technology</option>
-    <option value="top">top</option>
-    <option value="world">world</option>
-</Form.Select>
-    
-      {container.map((item)=>{
+</div>
+<div className="col-md-4"></div>
+</div>
+
+   
+        
+    <div className="container news-container d-flex mt-5 pt-2 flex-wrap justify-content-center">
+
+
+      {container.map((item, index)=>{
           return(
-              <News   key={item.id} item={item} />
+              <News   key={index} item={item} />
           )
       })}
      
     </div>
-    
+    </>
   )
 }
     
+   
+
 export default NewsData;

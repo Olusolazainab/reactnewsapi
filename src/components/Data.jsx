@@ -1,0 +1,1 @@
+export const replacement = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjCasHELVIop292NBWdwKcce4FDhho5CFxng&usqp=CAU";

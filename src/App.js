@@ -1,6 +1,5 @@
 import "./index.css"
 import NewsData from "./components/NewsData";
-import { Navbar } from "react-bootstrap";
 
 
 
@@ -10,9 +9,9 @@ function App() {
 
    <div className="wrapper">
      
-    <Navbar bg="dark" variant="dark" fixed="top">
-    <h1 className="text-light d-flex justify-content-end">World News</h1>
-  </Navbar>
+    <nav fixed="top" className="bg-dark text-light p-0.5">
+    <p className="text-center display-5"> World News</p>
+  </nav>
 
  <NewsData />
    </div>
