@@ -7,14 +7,14 @@ function App() {
 
   return (
 
-   <div className="wrapper">
+   <>
      
-    <nav fixed="top" className="bg-dark text-light p-0.5">
-    <p className="text-center display-5"> World News</p>
+    <nav fixed="top" className="bg-dark text-light p-1 position-fixed w-100" >
+    <p className="text-center display-6 fw-bold pt-1 "> World News</p>
   </nav>
 
  <NewsData />
-   </div>
+   </>
   );
 }
 
