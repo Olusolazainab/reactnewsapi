@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useState, useEffect } from 'react';
 import News from './News';
 
@@ -9,7 +10,8 @@ const NewsData = () => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState('');
 
-	const fetchData = (API) => {
+	const fetchData = async (API) => {
+
 		fetch(API)
 			.then(res => {
 				if (!res.ok) {
@@ -22,13 +24,14 @@ const NewsData = () => {
 				setIsLoading(false);
 			})
 			.catch(err => {
-				setError(err.message);
+				console.log(err.message);
 			});
 	};
 
+
 	const moreData = () => {
 		console.log(page);
-		let url = `${process.env.REACT_APP_NEWSURL}?apikey=${process.env.REACT_APP_NEWSKEY}&language=en&category=science&page=${page}`;
+		let url = `${process.env.REACT_APP_NEWSURL}?apikey=${process.env.REACT_APP_NEWSKEY}&language=en&category=politics&page=${page}`;
 		fetch(url)
 			.then((res) => {
 				return res.json().then((data) => {
@@ -54,7 +57,7 @@ const NewsData = () => {
 
 	useEffect(() => {
 		fetchData(
-			`${process.env.REACT_APP_NEWSURL}?apikey=${process.env.REACT_APP_NEWSKEY}&language=en&category=sports`
+			`${process.env.REACT_APP_NEWSURL}?apikey=${process.env.REACT_APP_NEWSKEY}&language=en&category=politics&page`
 		);
 		window.addEventListener('scroll', handleScroll);
 		return () => window.removeEventListener('scroll', handleScroll);
